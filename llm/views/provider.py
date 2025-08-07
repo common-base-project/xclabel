@@ -20,14 +20,20 @@ def create_provider(request):
     data = json.loads(request.body.decode("utf-8") or "{}")
     provider = LLMProvider.objects.create(
         name=data.get("name", ""),
+        type=data.get("type", ""),
         base_url=data.get("base_url", ""),
         api_key=data.get("api_key", ""),
+        is_active=data.get("is_active", True),
+        extra=json.dumps(data.get("extra", {})) if isinstance(data.get("extra"), (dict, list)) else data.get("extra", ""),
     )
     return JsonResponse({
         "id": provider.id,
         "name": provider.name,
+        "type": provider.type,
         "base_url": provider.base_url,
         "api_key": provider.api_key,
+        "is_active": provider.is_active,
+        "extra": provider.extra,
     })
 
 
@@ -37,15 +43,21 @@ def update_provider(request, pk: int):
         return HttpResponseNotAllowed(["PUT", "PATCH"])
     provider = get_object_or_404(LLMProvider, pk=pk)
     data = json.loads(request.body.decode("utf-8") or "{}")
-    for field in ["name", "base_url", "api_key"]:
+    for field in ["name", "type", "base_url", "api_key", "is_active", "extra"]:
         if field in data:
-            setattr(provider, field, data[field])
+            value = data[field]
+            if field == "extra" and isinstance(value, (dict, list)):
+                value = json.dumps(value)
+            setattr(provider, field, value)
     provider.save()
     return JsonResponse({
         "id": provider.id,
         "name": provider.name,
+        "type": provider.type,
         "base_url": provider.base_url,
         "api_key": provider.api_key,
+        "is_active": provider.is_active,
+        "extra": provider.extra,
     })
 
 
