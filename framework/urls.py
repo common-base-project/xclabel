@@ -22,7 +22,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     # path(r'app/', include('app.urls')),
     path(r'', include('app.urls')),
-    path('llm/', include('llm.urls')),
+    path('api/llm/', include('llm.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
