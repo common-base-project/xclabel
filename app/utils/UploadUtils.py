@@ -5,8 +5,37 @@ import os
 import shutil
 import cv2
 import json
+import logging
+import re
 
 class UploadUtils():
+    def _validate_filename(self, filename):
+        base = os.path.basename(filename)
+        if base != filename or not re.match(r'^[\w.\-]+$', base):
+            raise ValueError("Invalid file name")
+        return base
+
+    def _write_file(self, path, data):
+        try:
+            with open(path, 'wb') as f:
+                f.write(data)
+        except Exception:
+            logging.exception("Failed to write file %s", path)
+            raise
+
+    def _imwrite(self, path, frame):
+        try:
+            cv2.imwrite(path, frame)
+        except Exception:
+            logging.exception("Failed to write image %s", path)
+            raise
+
+    def _remove_file(self, path):
+        try:
+            os.remove(path)
+        except Exception:
+            logging.exception("Failed to remove file %s", path)
+            raise
     # 上传模型测试文件-图片
     def upload_model_test_image(self, test_save_dir, file):
         ret = False
@@ -14,7 +43,7 @@ class UploadUtils():
         info = {}
 
         try:
-            file_name = file.name  # 上传文件的名称
+            file_name = self._validate_filename(file.name)  # 上传文件的名称
             file_size = file.size  # 上传文件的字节大小 1M = 1024*1024, 100M = 100*1024*1024 = 104857600
             file_size_m = int(file_size / 1024 / 1024)
             file_content_type = file.content_type  # 上传文件的 content_type [wav->audio/wav , mp3->audio/mpeg]
@@ -26,11 +55,11 @@ class UploadUtils():
             if file_size_m <= 10:
                 if 'image/png' == file_content_type or 'image/jpeg' == file_content_type or 'image/jpg' == file_content_type:
                     test_filepath = os.path.join(test_save_dir, file_name)
-                    # 图片写入本地start
-                    f = open(test_filepath, 'wb')
-                    f.write(file.read())
-                    f.close()
-                    # 图片写入本地end
+                    try:
+                        self._write_file(test_filepath, file.read())
+                    except Exception as e:
+                        msg = str(e)
+                        return ret, msg, info
                     info = {
                         "file_name": file_name,  # 上传文件的原始name
                         "file_size": file_size,  # 上传文件的原始size
@@ -52,7 +81,7 @@ class UploadUtils():
         info = {}
 
         try:
-            file_name = file.name  # 上传文件的名称
+            file_name = self._validate_filename(file.name)  # 上传文件的名称
             file_size = file.size  # 上传文件的字节大小 1M = 1024*1024, 100M = 100*1024*1024 = 104857600
             file_size_m = int(file_size / 1024 / 1024)
             file_content_type = file.content_type  # 上传文件的 content_type [wav->audio/wav , mp3->audio/mpeg]
@@ -65,11 +94,11 @@ class UploadUtils():
                 if file_name.endswith(".avi") or file_name.endswith(".flv") or file_name.endswith(".mp4"):
 
                     test_filepath = os.path.join(test_save_dir, file_name)
-                    # 视频写入本地start
-                    f = open(test_filepath, 'wb')
-                    f.write(file.read())
-                    f.close()
-                    # 视频写入本地end
+                    try:
+                        self._write_file(test_filepath, file.read())
+                    except Exception as e:
+                        msg = str(e)
+                        return ret, msg, info
                     info = {
                         "file_name": file_name,  # 上传文件的原始name
                         "file_size": file_size,  # 上传文件的原始size
@@ -91,7 +120,7 @@ class UploadUtils():
         info = {}
 
         try:
-            file_name = file.name  # 上传文件的名称
+            file_name = self._validate_filename(file.name)  # 上传文件的名称
             file_size = file.size  # 上传文件的字节大小 1M = 1024*1024, 100M = 100*1024*1024 = 104857600
             file_size_m = int(file_size / 1024 / 1024)
             file_content_type = file.content_type  # 上传文件的 content_type [wav->audio/wav , mp3->audio/mpeg]
@@ -114,31 +143,32 @@ class UploadUtils():
                         new_filename = "%s_%s" % (__ymd_hms_str, file_name)
                         new_filename_abs = os.path.join(sample_dir, new_filename)  # 存储上传文件的绝对路径
 
-                        # 图片写入本地start
-                        f = open(new_filename_abs, 'wb')
-                        f.write(file.read())
-                        f.close()
-                        # 图片写入本地end
+                        try:
+                            self._write_file(new_filename_abs, file.read())
+                        except Exception as e:
+                            msg = str(e)
+                            return ret, msg, info
                     else:
                         __ymd_hms_str = datetime.now().strftime("%Y%m%d%H%M%S")
-                        # image_name = "%s.%s" % (__ymd_hms_str, __suffix)
                         temp_new_filename = "%s_%s" % (__ymd_hms_str, file_name)
                         temp_new_filename_abs = os.path.join(sample_dir, temp_new_filename)  # 存储上传文件的绝对路径
 
-                        # 图片写入本地start
-                        f = open(temp_new_filename_abs, 'wb')
-                        f.write(file.read())
-                        f.close()
-                        # 图片写入本地end
-
-                        # 非jpg结尾的图片转换为jpg文件
+                        try:
+                            self._write_file(temp_new_filename_abs, file.read())
+                        except Exception as e:
+                            msg = str(e)
+                            return ret, msg, info
 
                         __name = file_name[:-4]
                         new_filename = "%s_%s" % (__ymd_hms_str, "%s.jpg" % __name)
                         new_filename_abs = os.path.join(sample_dir, new_filename)  # 存储上传文件的绝对路径
                         temp_image = cv2.imread(temp_new_filename_abs)
-                        cv2.imwrite(new_filename_abs, temp_image)
-                        os.remove(temp_new_filename_abs)
+                        try:
+                            self._imwrite(new_filename_abs, temp_image)
+                            self._remove_file(temp_new_filename_abs)
+                        except Exception as e:
+                            msg = str(e)
+                            return ret, msg, info
 
                     ret = True
                     msg = "success"
@@ -165,7 +195,7 @@ class UploadUtils():
         info = {}
 
         try:
-            file_name = file.name  # 上传文件的名称
+            file_name = self._validate_filename(file.name)  # 上传文件的名称
             file_size = file.size  # 上传文件的字节大小 1M = 1024*1024, 100M = 100*1024*1024 = 104857600
             file_size_m = int(file_size / 1024 / 1024)
             file_content_type = file.content_type  # 上传文件的 content_type [wav->audio/wav , mp3->audio/mpeg]
@@ -184,11 +214,11 @@ class UploadUtils():
                     video_filename = "%s_%s" % (__ymd_hms_str, file_name)
                     video_filename_abs = os.path.join(sample_dir, video_filename)  # 存储上传文件的绝对路径
 
-                    # 视频写入本地start
-                    f = open(video_filename_abs, 'wb')
-                    f.write(file.read())
-                    f.close()
-                    # 视频写入本地end
+                    try:
+                        self._write_file(video_filename_abs, file.read())
+                    except Exception as e:
+                        msg = str(e)
+                        return ret, msg, info
 
                     # 分割视频为图片start
                     new_filenames = []
@@ -207,8 +237,12 @@ class UploadUtils():
                             if frame_count % saveInterval == 0:
                                 new_filename = image_filename_prefix + str(frame_count) + ".jpg"
                                 image_filename_abs = os.path.join(sample_dir, new_filename)
-                                cv2.imwrite(image_filename_abs, frame)
-                                new_filenames.append(new_filename)
+                                try:
+                                    self._imwrite(image_filename_abs, frame)
+                                    new_filenames.append(new_filename)
+                                except Exception as e:
+                                    msg = str(e)
+                                    return ret, msg, info
                         else:
                             break
 
@@ -216,7 +250,11 @@ class UploadUtils():
                     # 分割视频为图片end
 
 
-                    os.remove(video_filename_abs)
+                    try:
+                        self._remove_file(video_filename_abs)
+                    except Exception as e:
+                        msg = str(e)
+                        return ret, msg, info
 
                     ret = True
                     msg = "success"
@@ -243,7 +281,7 @@ class UploadUtils():
         info = {}
 
         try:
-            file_name = file.name  # 上传文件的名称
+            file_name = self._validate_filename(file.name)  # 上传文件的名称
             file_size = file.size  # 上传文件的字节大小 1M = 1024*1024, 100M = 100*1024*1024 = 104857600
             file_size_m = int(file_size / 1024 / 1024)
             file_content_type = file.content_type  # 上传文件的 content_type [wav->audio/wav , mp3->audio/mpeg]
@@ -267,11 +305,11 @@ class UploadUtils():
                     new_filename = "%s_%s" % (__ymd_hms_str, file_name)
                     new_filename_abs = os.path.join(sample_dir, new_filename)  # 存储上传文件的绝对路径
 
-                    # 图片写入本地start
-                    f = open(new_filename_abs, 'wb')
-                    f.write(file.read())
-                    f.close()
-                    # 图片写入本地end
+                    try:
+                        self._write_file(new_filename_abs, file.read())
+                    except Exception as e:
+                        msg = str(e)
+                        return ret, msg, info
 
                     ret = True
                     msg = "success"
