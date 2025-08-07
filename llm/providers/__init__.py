@@ -1,13 +1,26 @@
+"""LLM provider implementations."""
+
 from .base import LLMProvider
-from .openai import OpenAIProvider
+from .deepseek import DeepSeekProvider
+from .volcengine import VolcEngineProvider
+from .vllm import VLLMProvider
+from .ollama import OllamaProvider
+from .bailian import BailianProvider
 
 PROVIDER_MAP = {
-    'openai': OpenAIProvider,
+    "deepseek": DeepSeekProvider,
+    "volcengine": VolcEngineProvider,
+    "vllm": VLLMProvider,
+    "ollama": OllamaProvider,
+    "bailian": BailianProvider,
 }
 
-def get_provider(provider_type: str, **kwargs) -> LLMProvider:
-    """Return provider implementation by type."""
-    cls = PROVIDER_MAP.get(provider_type.lower())
-    if not cls:
-        raise ValueError(f'Unsupported provider type: {provider_type}')
-    return cls(**kwargs)
+__all__ = [
+    "LLMProvider",
+    "DeepSeekProvider",
+    "VolcEngineProvider",
+    "VLLMProvider",
+    "OllamaProvider",
+    "BailianProvider",
+    "PROVIDER_MAP",
+]
