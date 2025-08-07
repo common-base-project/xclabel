@@ -14,3 +14,4 @@ class LLMProvider(models.Model):
         db_table = 'xc_llm_provider'
         verbose_name = 'LLM Provider'
         verbose_name_plural = 'LLM Providers'
+
