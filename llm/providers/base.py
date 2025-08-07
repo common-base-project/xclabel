@@ -26,3 +26,4 @@ class LLMProvider(ABC):
     @abstractmethod
     def analyze_media(self, media: bytes, **kwargs: Any) -> Any:
         """Analyze the given media and return a description or metadata."""
+
