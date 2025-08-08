@@ -13,6 +13,24 @@
 - 环境安装完成后，启动服务： python manage.py runserver 0.0.0.0:9924
 - 访问服务：在浏览器输入 http://127.0.0.1:9924 就可以开始了，默认账号 admin admin888
 
+### 自动标注接口
+
+后端提供了简单的自动标注能力：
+
+* `POST /api/auto_label/start`  启动自动标注任务，参数示例：
+
+```json
+{
+  "task_code": "task1",
+  "sample_codes": ["sample1", "sample2"]
+}
+```
+
+接口返回 `job_id`，可用于查询进度。
+
+* `GET /api/auto_label/progress?job_id=<id>` 查询任务进度，返回总数、已完成数量及百分比。
+
+
 ### 软件截图
 <img width="720" alt="5" src="https://gitee.com/Vanishi/images/raw/master/xclabel/5.png">
 <img width="720" alt="7" src="https://gitee.com/Vanishi/images/raw/master/xclabel/7.png">

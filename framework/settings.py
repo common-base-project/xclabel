@@ -44,8 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'llm'
+    'llm',
 ]
+
+try:
+    import django_q  # noqa: F401
+    INSTALLED_APPS.append('django_q')
+except Exception:  # pragma: no cover
+    pass
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -156,3 +162,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # settings.py
 DATA_UPLOAD_MAX_NUMBER_FILES = 1024000  # 假设你需要更多的文件上传数量
+
+Q_CLUSTER = {
+    'name': 'xclabel',
+    'workers': 1,
+    'recycle': 500,
+    'timeout': 60,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': True
+}
