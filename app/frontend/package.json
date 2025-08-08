@@ -1,0 +1,22 @@
+{
+  "name": "xclabel-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "element-plus": "^2.6.5",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vitest": "^0.34.5",
+    "vite": "^4.5.0",
+    "jsdom": "^22.1.0"
+  }
+}

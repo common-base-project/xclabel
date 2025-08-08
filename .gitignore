@@ -11,3 +11,6 @@ __pycache__
 app/__pycache__
 framework/__pycache__
 static/storage
+app/frontend/node_modules
+app/frontend/dist
+

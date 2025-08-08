@@ -13,6 +13,13 @@
 - 环境安装完成后，启动服务： python manage.py runserver 0.0.0.0:9924
 - 访问服务：在浏览器输入 http://127.0.0.1:9924 就可以开始了，默认账号 admin admin888
 
+### 前端开发
+- 进入前端目录 `cd app/frontend`
+- 安装依赖 `npm install`
+- 开发调试 `npm run dev`
+- 运行测试 `npm test`
+- 构建产物 `npm run build`
+
 ### 软件截图
 <img width="720" alt="5" src="https://gitee.com/Vanishi/images/raw/master/xclabel/5.png">
 <img width="720" alt="7" src="https://gitee.com/Vanishi/images/raw/master/xclabel/7.png">
