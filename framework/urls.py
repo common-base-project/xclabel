@@ -23,6 +23,7 @@ urlpatterns = [
     # path(r'app/', include('app.urls')),
     path(r'', include('app.urls')),
     path('api/llm/', include('llm.urls')),
+    path('api/agent/', include('agent.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
