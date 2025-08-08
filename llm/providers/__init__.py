@@ -15,6 +15,7 @@ PROVIDER_MAP = {
     "vllm": VLLMProvider,
     "ollama": OllamaProvider,
     "bailian": BailianProvider,
+    "openai": OpenAIProvider,
 }
 
 
@@ -52,3 +53,25 @@ __all__ = [
     "PROVIDER_MAP",
     "get_provider",
 ]
+
+
+def get_provider(provider_type: str, **kwargs) -> LLMProvider:
+    """Return an initialized provider implementation.
+
+    Args:
+        provider_type: The identifier for the provider implementation.
+        **kwargs: Additional keyword arguments passed to the provider constructor
+            such as ``api_key`` or ``base_url``.
+
+    Raises:
+        ValueError: If ``provider_type`` is not a supported provider.
+
+    Returns:
+        An instance of :class:`LLMProvider`.
+    """
+
+    try:
+        provider_cls = PROVIDER_MAP[provider_type]
+    except KeyError as exc:
+        raise ValueError(f"Unknown provider type: {provider_type}") from exc
+    return provider_cls(**kwargs)

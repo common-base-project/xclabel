@@ -13,6 +13,10 @@
 - 环境安装完成后，启动服务： python manage.py runserver 0.0.0.0:9924
 - 访问服务：在浏览器输入 http://127.0.0.1:9924 就可以开始了，默认账号 admin admin888
 
+### Agent API 示例
+- 创建 LLM Provider 和 Agent 后，可通过 `/api/agent/chat` 与 Agent 对话。
+- 执行简单工作流可调用 `/api/agent/workflow/execute`，请求体包含 `agent_id` 和 `workflow` 节点列表。
+
 ### 软件截图
 <img width="720" alt="5" src="https://gitee.com/Vanishi/images/raw/master/xclabel/5.png">
 <img width="720" alt="7" src="https://gitee.com/Vanishi/images/raw/master/xclabel/7.png">
