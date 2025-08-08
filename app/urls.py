@@ -6,6 +6,7 @@ from .views import SampleView
 from .views import TrainView
 from .views import TrainTestView
 from .views import StorageView
+from .views import AutoLabelView
 
 app_name = 'app'
 
@@ -48,6 +49,9 @@ urlpatterns = [
     path('trainTest/postAdd', TrainTestView.api_postAdd),
     path('trainTest/postDel', TrainTestView.api_postDel),
     path('trainTest/getIndex', TrainTestView.api_getIndex),
+
+    path('api/auto_label/start', AutoLabelView.api_start),
+    path('api/auto_label/progress', AutoLabelView.api_progress),
 
     # 系统功能
     path('storage/download', StorageView.download),

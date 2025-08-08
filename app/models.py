@@ -48,6 +48,8 @@ class TaskSample(models.Model):
     annotation_time = models.DateTimeField(verbose_name='标注时间')
     annotation_content = models.TextField(verbose_name='标注内容')
     annotation_state = models.IntegerField(verbose_name='标注状态') # 0:未标注 1:已标注 默认0
+    annotation_model = models.CharField(max_length=100, verbose_name='标注模型', default='')
+    annotation_params = models.TextField(verbose_name='标注参数', default='')
 
     def __repr__(self):
         return self.code
